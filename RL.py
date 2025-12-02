@@ -59,6 +59,8 @@ def learn_Q(env, n_sims, gamma = 1, omega = 0.77, epsilon = 0.05,
     #######################################################################
             # YOUR CODE HERE
             # Compute the learning rate and update the Q-function 
+            alpha = 1 / (state_action_count[state][action] ** omega)
+            Q[state][action] += alpha * (action_reward + gamma * np.max(Q[state2]) - Q[state][action])
 
 
 
@@ -192,7 +194,15 @@ def learn_MC(env, n_sims, gamma = 1, epsilon = 0.05,
      #################################################################### 
         # YOUR CODE HERE
             # Update avg_reward
+            avg_reward += (episode_reward - avg_reward) / (episode + 1)
+
             # Update the Q-function for each visited state/action pair. 
+            for s in episode_state_action_count:
+                for a in range(env.action_space.n):
+                    if episode_state_action_count[s][a] > 0:
+                        alpha = 1 / (state_action_count[s][a] ** 0.77)
+                        Q[s][a] += alpha * (episode_reward - Q[s][a])
+
         
 
         
