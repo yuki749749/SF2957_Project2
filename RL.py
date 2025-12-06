@@ -42,8 +42,9 @@ def learn_Q(env, n_sims, gamma = 1, omega = 0.77, epsilon = 0.05,
         state = env.reset()
         while not done:
             #Here you cans switch between decaying exploration and constant exploration
-            explore = random.random() < epsilon 
-            #explore = random.random() < (epsilon / (1 + state_action_count[state].sum()))
+            #explore = random.random() < epsilon
+            eps = epsilon / (1 + state_action_count[state].sum())
+            explore = random.random() < eps
             if state not in Q or explore:
                 # Take a random action
                 action = env.action_space.sample()
@@ -70,8 +71,8 @@ def learn_Q(env, n_sims, gamma = 1, omega = 0.77, epsilon = 0.05,
             episode_reward += action_reward
 
         if episode % (n_sims // 100) == 0:
-            print('Mean avg reward, after {} episodes: {}'.format(
-                episode, avg_reward))
+            print('Mean avg reward, after {} episodes: {}, epsilon: {}'.format(
+                episode, avg_reward, eps))
             if f:
                 # append to the file which we want to save to
                 f.write("{},{}\n".format(episode, str(avg_reward)))
@@ -166,8 +167,9 @@ def learn_MC(env, n_sims, gamma = 1, epsilon = 0.05,
                                                       dtype = int))
         while not done:
             #Here you cans switch between decaying exploration and constant exploration
-            explore = random.random() < epsilon 
-            #explore = random.random() < (epsilon / (1 + state_action_count[state].sum()))
+            #explore = random.random() < epsilon
+            eps = epsilon / (1 + state_action_count[state].sum())
+            explore = random.random() < eps
             if state not in Q or explore:
                 # Take a random action
                 action = env.action_space.sample()
@@ -185,8 +187,8 @@ def learn_MC(env, n_sims, gamma = 1, epsilon = 0.05,
             episode_reward += action_reward
 
         if episode % (n_sims // 100) == 0:
-            print('Mean avg reward, after {} episodes: {}'.format(
-                episode, avg_reward))
+            print('Mean avg reward, after {} episodes: {}, epsilon: {}'.format(
+                episode, avg_reward, eps))
             if f:
                 # append to the file which we want to save to
                 f.write("{},{}\n".format(episode, str(avg_reward)))
