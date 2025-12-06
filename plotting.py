@@ -89,3 +89,42 @@ def plot_avg_reward_episode(path, env_types, ndecks):
     ax.set_xlabel("episode", size=22)
     ax.set_ylabel("avg. reward", size=22)
     return fig, lgd
+
+
+def plot_avg_reward_episode_omega(path, env_types, omegas):
+    """
+    Function which plots the average return over episodes
+
+    path: path to the folder where the data resides
+    env_types: list with the env types you want to plot
+    omegas: a list with the omegas that you want to plot
+    save_path: optional path of where to save the fig.
+    """
+    def load_df(path, env_type, omegas):
+        assert env_type in ["hand_MC", "hand", "sum"]
+        path_to_file = "{}/{}_state_{}.txt".format(path, env_type, omegas)
+        df = pd.read_table(path_to_file, sep=",")
+        df['env_type'] = env_type
+        df['omega'] = omegas
+        return df
+
+    df_l = []
+    for env in env_types:
+        for omega in omegas:
+            df_l.append(load_df(path, env, omega))
+    df = pd.concat(df_l)
+
+    fig, ax = plt.subplots(figsize=(8,6))
+    lab= []
+    for label, df in df.groupby(["env_type", "omega"]):
+        label_text = f"{str(label[1])}, {round(df.avg_reward.max(), 4)}"
+        lab.append(label_text)
+        ax.plot(df['episode'], df['avg_reward'], label=label_text)
+
+    lgd = ax.legend(title="(omega, max_reward)", loc='upper center',
+                    bbox_to_anchor=(0.5, -0.1),
+              shadow=False, ncol=2, framealpha=0.0, fontsize=22)
+    ax.set_xlabel("episode", size=22)
+    ax.set_ylabel("avg. reward", size=22)
+    return fig, lgd
+

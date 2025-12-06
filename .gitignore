@@ -2,3 +2,5 @@ data
 figures
 __pycache__/
 *.pyc
+.env/
+.idea/
